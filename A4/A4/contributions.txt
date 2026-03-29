@@ -1,9 +1,24 @@
-Here you'll write a very brief description of which group members worked on which part. If you worked alone, you should still indicate that you worked alone.
+CISC 352 – Assignment 4
+Group Number: 70
 
-Q1 - Daryan Lindsay
+Student Information:
 
-Q2 - Tirthkumar Patel 
-Worked on Q2, which is a small Neural Network, which uses multiple layers with ReLU activation to capture the curve's non linearity.
-It was trained using gradient based updates and nn.SquareLoss. It stops when the average_loss is =< 0.02.
+1. Shaun Stasuik
+   Student Number: 20389739
+   NetID: 22QH17
 
-Q3 - Shaun Stasuik
+2. Daryan Lindsay
+   Student Number: 20383488
+   NetID: 22GMV4
+
+3. Tirthkumar Patel
+   Student Number: 20442158
+   NetID: 23DWN3
+
+Contribution Description:
+
+Daryan Lindsay implemented Question 1, including the required functions and logic for the first model.
+
+Tirthkumar Patel implemented Question 2, including the necessary functions and training procedures for the second model.
+
+Shaun Stasuik implemented Question 3 in models.py, including the neural network architecture, forward pass (run), loss computation (get_loss), and training procedure (train_model) for digit classification.
