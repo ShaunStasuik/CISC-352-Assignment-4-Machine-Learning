@@ -165,21 +165,22 @@ class DigitClassificationModel(object):
     working on this part of the project.)
     """
     def __init__(self):
-        # Initialize your model parameters here
-        # Hyperparameters
-        self.batch_size = 100
-        self.learning_rate = 0.1
+        self.batch_size = 100        # Number of examples per gradient update
+        self.learning_rate = 0.1     # Step size for gradient descent
 
-        # 784 -> 200 -> 100 -> 10
+        # First layer: maps 784-dim input to 200 hidden units
         self.w1 = nn.Parameter(784, 200)
         self.b1 = nn.Parameter(1, 200)
 
+        # Second layer: maps 200 to 100 hidden units
         self.w2 = nn.Parameter(200, 100)
         self.b2 = nn.Parameter(1, 100)
 
+        # Output layer: maps 100 to 10 class scores
         self.w3 = nn.Parameter(100, 10)
         self.b3 = nn.Parameter(1, 10)
 
+        # Store all parameters for easy gradient updates
         self.parameters = [
             self.w1, self.b1,
             self.w2, self.b2,
@@ -200,9 +201,18 @@ class DigitClassificationModel(object):
             A node with shape (batch_size x 10) containing predicted scores
                 (also called logits)
         """
+        # First hidden layer:
+        # Linear transformation then bias, then ReLU activation
         h1 = nn.ReLU(nn.AddBias(self.b1, nn.Linear(x, self.w1)))
+
+        # Second hidden layer:
+        # Another linear then bias then ReLU
         h2 = nn.ReLU(nn.AddBias(self.b2, nn.Linear(h1, self.w2)))
+
+        # Output layer (NO ReLU here):
+        # Produces raw scores (logits) for each class
         logits = nn.AddBias(self.b3, nn.Linear(h2, self.w3))
+
         return logits
 
     def get_loss(self, x, y):
@@ -224,17 +234,26 @@ class DigitClassificationModel(object):
         """
         Trains the model.
         """
-        target_validation_accuracy = 0.975
-        max_epochs = 20
+        target_validation_accuracy = 0.975  # Stop when model is good enough
+        max_epochs = 20                     # Safety limit to avoid infinite training
 
         for _ in range(max_epochs):
+
+            # Iterate through dataset in batches
             for x, y in data.iterate_once(self.batch_size):
+
+                # Compute loss for current batch
                 loss = self.get_loss(x, y)
+
+                # Compute gradients of loss w.r.t. all parameters
                 gradients = nn.gradients(self.parameters, loss)
 
+                # Update each parameter using gradient descent
                 for parameter, gradient in zip(self.parameters, gradients):
+                    # Move parameter in direction that reduces loss
                     parameter.update(-self.learning_rate, gradient)
 
+            # Check validation accuracy after each epoch
             if data.get_validation_accuracy() >= target_validation_accuracy:
                 break
 
