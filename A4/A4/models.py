@@ -68,8 +68,21 @@ class RegressionModel(object):
     to approximate sin(x) on the interval [-2pi, 2pi] to reasonable precision.
     """
     def __init__(self):
-        # Initialize your model parameters here
-        "*** YOUR CODE HERE ***"
+        # initializing model parameters
+        # layer 1 - input 1 feature -> 512 hidden units
+        self.w1 = nn.Parameter(1, 512)
+        self.b1 = nn.Parameter(1, 512)
+
+        # layer 2 - 512 -> 512 hidden units
+        self.w2 = nn.Parameter(512, 512)
+        self.b2 = nn.Parameter(1, 512)
+
+        # layer 3 - 512 -> output 1 val
+        self.w3 = nn.Parameter(512, 1)
+        self.b3 = nn.Parameter(1, 1)
+
+        # learning rate
+        self.lr = 0.005
 
     def run(self, x):
         """
@@ -80,7 +93,16 @@ class RegressionModel(object):
         Returns:
             A node with shape (batch_size x 1) containing predicted y-values
         """
-        "*** YOUR CODE HERE ***"
+        # layer 1 - linear transformation, bias, ReLU activation
+        layer1 = nn.ReLU(nn.AddBias(self.b1, nn.Linear(x, self.w1)))
+
+        # layer 2 - linear transformation, bias, ReLU activation
+        layer2 = nn.ReLU(nn.AddBias(self.b2, nn.Linear(layer1, self.w2)))
+
+        # output - linear transformation, bias 
+        output = nn.AddBias(self.b3, nn.Linear(layer2, self.w3))
+
+        return output
 
     def get_loss(self, x, y):
         """
@@ -92,13 +114,41 @@ class RegressionModel(object):
                 to be used for training
         Returns: a loss node
         """
-        "*** YOUR CODE HERE ***"
+        predictions = self.run(x)
+        return nn.SquareLoss(predictions, y)
+
 
     def train_model(self, data):
         """
         Trains the model.
         """
-        "*** YOUR CODE HERE ***"
+        while True:
+            total_loss = 0
+            num_batches = 0
+
+            # iterating over mini batches of dataset
+            for x, y in data.iterate_once(batch_size=200):
+                loss = self.get_loss(x, y)
+
+                # collecting all parameter
+                params = [self.w1, self.b1, self.w2, self.b2, self.w3, self.b3]
+
+                # computing gradients
+                grads = nn.gradients(params, loss)
+
+                # updating each parameter 
+                for param, grad in zip(params, grads):
+                    param.update(-self.lr, grad)
+
+                total_loss += nn.as_scalar(loss)
+                num_batches += 1
+
+            # computing average loss 
+            avg_loss = total_loss / num_batches
+
+            # stopping training once average loss is less than 0.02
+            if avg_loss <= 0.02:
+                break
 
 class DigitClassificationModel(object):
     """

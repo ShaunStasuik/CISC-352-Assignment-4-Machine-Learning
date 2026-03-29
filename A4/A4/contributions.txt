@@ -1,1 +1,9 @@
 Here you'll write a very brief description of which group members worked on which part. If you worked alone, you should still indicate that you worked alone.
+
+Q1 - Daryan Lindsay
+
+Q2 - Tirthkumar Patel 
+Worked on Q2, which is a small Neural Network, which uses multiple layers with ReLU activation to capture the curve's non linearity.
+It was trained using gradient based updates and nn.SquareLoss. It stops when the average_loss is =< 0.02.
+
+Q3 - Shaun Stasuik
